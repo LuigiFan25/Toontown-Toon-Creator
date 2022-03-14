@@ -22,7 +22,7 @@ toonLegTypes = {"s": 'phase_3/models/char/tt_a_chr_dgs_shorts_legs_1000.bam',  #
 class Toon:
     '''Toon Actor, contains the body and the legs, but attaches on the head retrieved from ToonHead'''
 
-    def __init__(self, species, head_type=None, has_eyelashes=False, torso_type=None, leg_size=None, gender=None, head_color='White', arm_color='White', glove_color='White', leg_color='White', shirt_texture=None, short_texture=None, skirt_texture=None, shirt_color='White', bottom_color='White', backpack=None, glasses=None, shoes_type=None, long_boot_texture=None, short_boot_texture=None, shoes_texture=None, animation_type=None, is60FPS=None, wearsShoes=None):
+    def __init__(self, species, head_type=None, has_eyelashes=False, torso_type=None, leg_size=None, gender=None, head_color='White', arm_color='White', glove_color='White', leg_color='White', shirt_texture=None, short_texture=None, skirt_texture=None, shirt_color='White', bottom_color='White', hat =None, backpack=None, glasses=None, shoes_type=None, long_boot_texture=None, short_boot_texture=None, shoes_texture=None, animation_type=None, is60FPS=None, wearsShoes=None):
         # DNA based stuff
         self.toonActor = None
         self.species = species
@@ -46,7 +46,8 @@ class Toon:
         # Accessory based stuff
         self.backpack_type = backpack
         self.backpack_model = None
-        self.hat = None
+        self.hat = hat
+        self.hat_model = None
         # Also counts for mask since they're both the same.
         self.glasses_type = glasses
         self.glasses_model = None
@@ -127,6 +128,9 @@ class Toon:
             self.setBottomColor(self.bottom_color)
         else:
             pass
+
+        if self.hat:
+            self.attachHat(self.hat)
 
         # Accessory related stuff
         if self.backpack_type:
@@ -469,7 +473,10 @@ class Toon:
                     backpack_dict[backpack_to_attach][5])
             else:
                 print("What kind of torso are you rockin?")
-
+                
+    def attachHat(self, hat_to_attach):
+        # TODO
+        return
     def attachGlasses(self, glasses_to_attach):
         '''Attaches glasses to the Toon.'''
 
@@ -734,6 +741,8 @@ class Toon:
             else:
                 self.glasses_model.setHpr(180, 0, 0)
                 self.glasses_model.setPos(0, 0.25, 0.05)
+
+    def attachHat(self):
 
     def attachShoes(self, shoe_type):
         '''Attaches the shoe based on the type of shoe given.'''

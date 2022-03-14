@@ -338,6 +338,10 @@ class OptionsMenu(DirectObject):
             self.selectedToon.attachBackpack(backpack_type)
             print(f"Backpack has been changed to {backpack_type}")
 
+        def updateHat(hat_type):
+            self.selectedToon.hat = hat_type
+            self.selectedToon.attachHat(hat_type)
+
         def updateGlasses(glasses_type):
             self.selectedToon.glasses_type = glasses_type
             self.selectedToon.attachGlasses(glasses_type)

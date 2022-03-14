@@ -2041,7 +2041,15 @@ backpack_dict = {
     'Vanilla Bowtie' : ['phase_4/models/accessories/ttr_m_chr_avt_acc_pac_bowtie.bam', 'phase_4/maps/ttr_t_chr_avt_acc_hat_ribbonTasty_2.jpg', (0.25,-0.5,0.475), (0.25,-0.25,0.45), (0.25,-0.34,0.65), 0.25],
     'Yellow Polka-pack': ['phase_4/models/accessories/tt_m_chr_avt_acc_pac_backpack.bam', 'phase_4/maps/tt_t_chr_avt_acc_pac_backpackPolkaDotYellow.jpg', (0.4,-1.5,0.1), (0.3,-1.1,0.1), (0.3,-1.25,0.2), 0.32],
 }
-
+hat_dict = {
+    'Green Baseball Cap': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_baseball'],
+    'Blue Baseball Cap': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_baseball', 'phase_4/maps/tt_t_chr_avt_acc_hat_baseballBlue.jpg'],
+    'Orange Baseball Cap': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_baseball', 'phase_4/maps/tt_t_chr_avt_acc_hat_baseballOrange.jpg'],
+    'Beige Safari Hat': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_safari'],
+    'Brown Safari Hat': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_safari', 'phase_4/maps/tt_t_chr_avt_acc_hat_safariBrown.jpg'],
+    'Green Safari Hat': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_safari', 'phase_4/maps/tt_t_chr_avt_acc_hat_safariGreen.jpg'],
+    'Pink Bow': ['phase_4/models/accessories/tt_m_chr_avt_acc_hat_ribbon'],
+}
 
 # Glasses model, (potentially texture if reskin), (rgb file if needed)
 
