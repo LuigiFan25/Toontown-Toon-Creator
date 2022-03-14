@@ -334,11 +334,14 @@ class OptionsMenu(DirectObject):
         def updateShortTexture(short_texture):
             self.selectedToon.short_texture = short_texture
             self.selectedToon.setShortTexture(short_texture)
+            self.selectedToon.bottom_texture = short_texture
+
             print(f"Short Texture has been changed to {short_texture}")
 
         def updateSkirtTexture(skirt_texture):
             self.selectedToon.skirt_texture = skirt_texture
             self.selectedToon.setSkirtTexture(skirt_texture)
+            self.selectedToon.bottom_texture = skirt_texture
             print(f"Skirt Texture has been changed to {skirt_texture}")
 
         def updateShirtColor(shirt_color):
@@ -395,7 +398,22 @@ class OptionsMenu(DirectObject):
 
         def generateToon():
             '''Just prints out the Toon's toString'''
-            print(self.selectedToon)
+            self.selectedNPC = (self.selectedToon.headtype, self.selectedToon.torso_type, 
+                                self.selectedToon.leg_size, self.selectedToon.eyelashes,
+                                self.selectedToon.arm_color, self.selectedToon.glove_color,
+                                self.selectedToon.leg_color, self.selectedToon.head_color,
+                                self.selectedToon.shirt_texture, self.selectedToon.shirt_color,
+                                self.selectedToon.shirt_texture, self.selectedToon.shirt_color,
+                                self.selectedToon.bottom_texture, self.selectedToon.bottom_color,
+                                self.selectedToon.hat, None, 'White',
+                                self.selectedToon.backpack_type, None, 'White',
+                                self.selectedToon.glasses_type, None, 'White',
+                                self.selectedToon.shoe_texture, None, 'White'
+
+
+
+                                )
+            print(self.selectedNPC)
 
         self.rotation_slider = OptionsSlider(
             aspect2d, '', -0.80, rotateToon, (0, 360))

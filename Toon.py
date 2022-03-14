@@ -62,7 +62,7 @@ class Toon:
         self.head = ToonHead(self.species, self.headtype, self.eyelashes)
         self.torso = toonTorsoTypes[self.torso_type]
         self.legs = toonLegTypes[self.leg_size]
-
+        self.bottom_texture = None
         self.generateActor()
 
     def generateActor(self):
