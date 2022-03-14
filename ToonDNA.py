@@ -11,8 +11,6 @@ colorsList = {
     'Bright Red'   : VBase4(0.933594, 0.265625, 0.28125, 1.0),
     'Brown'        : VBase4(0.640625, 0.355469, 0.269531, 1.0),
     'Bubblegum'    : VBase4(0.996078431372549,0.35294117647058826,0.44313725490196076, 1.0),
-    'Cartoonival Blue': VBase4(0.22745098039, 0.55686274509, 0.96862745098, 1.0),
-    'Cartoonival Pink': VBase4(0.93333333333, 0.36470588235,0.81568627451, 1.0 ),  
     'Citrine'       :VBase4(0.855469, 0.933594, 0.492188, 1.0),  
     'Coral'        : VBase4(0.832031, 0.5, 0.296875, 1.0), 
     'Cream'         :VBase4(0.996094, 0.957031, 0.597656, 1.0),
@@ -57,8 +55,7 @@ species_dict = {
              'Monkey'       :'mo',
              'Mouse'        :'mi',
              'Pig'          :'p',
-             'Rabbit'       :'r',
-             'Riggy'        :'ri'
+             'Rabbit'       :'r'
               }
 
 # How does this work?
