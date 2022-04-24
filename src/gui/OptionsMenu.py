@@ -4,9 +4,10 @@ from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 from direct.interval.LerpInterval import *
-from Toon import Toon
-from ToonDNA import *
-from direct.showbase.DirectObject import DirectObject
+from toon.Toon import Toon
+from toon.ToonDNA import *
+from direct.directnotify import DirectNotifyGlobal
+
 options_geom = 'phase_3/models/gui/ttr_m_gui_gen_buttons.bam'
 gui_click_sound = 'phase_3/audio/sfx/GUI_create_toon_fwd.ogg'
 gui_rollover_sound = 'phase_3/audio/sfx/GUI_rollover.ogg'
@@ -15,6 +16,9 @@ toon_font = 'phase_3/fonts/ImpressBT.ttf'
 class OptionsMenu(DirectObject):
     '''The main OptionsMenu
        Houses the DirectFrame that is the entire frame.'''
+
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsMenu')
+    notify.setDebug(1)
 
     def __init__(self, toon):
         self.showOptions = True
@@ -84,7 +88,7 @@ class OptionsMenu(DirectObject):
         self.firstTabGeom = self.icon.find('**/*eyes')
 
         def funnyFunction():
-            print("You clicked on a button that has no function yet..or does it? Only time will tell......just kidding, I'm tired.\nIf you found this, I'd like a cookie, preferably chocolate chip.")
+            self.notify.warning("You clicked on a button that has no function yet..or does it? Only time will tell......just kidding, I'm tired.\nIf you found this, I'd like a cookie, preferably chocolate chip.")
 
         self.first_Tab = DirectGui.DirectButton(
             geom=self.firstTabGeom,
@@ -98,7 +102,7 @@ class OptionsMenu(DirectObject):
             parent=self.first_page,
             # GUI of the box
             frameSize=(-0.8, 0.85, -0.55, 0.35),
-            canvasSize=(-1, 0, -5, 1),
+            canvasSize=(-1, 0, -7, 1),
             frameColor=(0, 0, 0, 0),
 
             # GUI DirectScrollBar attributes
@@ -123,6 +127,13 @@ class OptionsMenu(DirectObject):
             verticalScroll_geom_hpr=(0, 0, 90),
             verticalScroll_geom_scale=(0.2, 0.1, 0.1),
             scrollBarWidth=0.1,
+        )
+
+        self.hidingButton = DirectGui.DirectButton(parent=self.optionsScroll.getCanvas(),
+        frameSize=(-1.25,0.75,-15,5),
+        command=self.hideSelectables,
+        pos=(0,2.5,0),
+        frameColor=(0,0,0,0)
         )
 
         def updateHead():
@@ -308,54 +319,89 @@ class OptionsMenu(DirectObject):
             self.selectedToon.generateActor()
             self.selectedToon.toonActor.setH(
                 self.rotation_slider.slider['value'])
-            print(f"Species has been changed to {species}")
+            self.notify.debug(f"Species has been changed to {species}")
 
         def updateAnim(anim):
             self.selectedToon.animationType = anim
             self.selectedToon.toonActor.stop()
             self.selectedToon.toonActor.loop(anim)
-            print(f"Animation has been changed to {anim}")
+            self.notify.debug(f"Animation has been changed to {anim}")
 
         def updateBackpack(backpack_type):
             self.selectedToon.backpack_type = backpack_type
             self.selectedToon.attachBackpack(backpack_type)
-            print(f"Backpack has been changed to {backpack_type}")
+
+            self.backpackXEntry.set( str( round( self.selectedToon.returnBackpackPosition().getX(), 2 ) ) )
+            self.backpackYEntry.set( str( round( self.selectedToon.returnBackpackPosition().getY(), 2 ) ) )
+            self.backpackZEntry.set( str( round( self.selectedToon.returnBackpackPosition().getZ(), 2 ) ) )
+            self.backpackScaleEntry.set(f"{ round(self.selectedToon.backpack_model.getScale().getX(), 2) } ")
+
+            self.notify.debug(f"Backpack has been changed to {backpack_type}")
+
+        def updateBackpackXPos(xPosition):
+            self.selectedToon.backpack_model.setX(float(xPosition))
+
+        def updateBackpackYPos(yPosition):
+            self.selectedToon.backpack_model.setY(float(yPosition))
+
+        def updateBackpackZPos(zPosition):
+            self.selectedToon.backpack_model.setZ(float(zPosition))
+
+        def updateBackpackScale(newScale):
+            self.selectedToon.backpack_model.setScale(float(newScale))
 
         def updateGlasses(glasses_type):
             self.selectedToon.glasses_type = glasses_type
             self.selectedToon.attachGlasses(glasses_type)
-            print(f"Glasses has been changed to {glasses_type}")
+            
+            self.glassesXEntry.set( str( round( self.selectedToon.returnGlassesPosition().getX(), 2 ) ) )
+            self.glassesYEntry.set( str( round( self.selectedToon.returnGlassesPosition().getY(), 2 ) ) )
+            self.glassesZEntry.set( str( round( self.selectedToon.returnGlassesPosition().getZ(), 2 ) ) )
+            self.glassesScaleEntry.set(f"{ round(self.selectedToon.glasses_model.getScale().getX(), 2) } ")
+            self.notify.debug(f"Glasses has been changed to {glasses_type}")
+
+        def updateGlassesXPos(xPosition):
+            self.selectedToon.glasses_model.setX(float(xPosition))
+
+        def updateGlassesYPos(yPosition):
+            self.selectedToon.glasses_model.setY(float(yPosition))
+
+        def updateGlassesZPos(zPosition):
+            self.selectedToon.glasses_model.setZ(float(zPosition))
+
+        def updateGlassesScale(newScale):
+            self.selectedToon.glasses_model.setScale(float(newScale))
 
         def updateShirtTexture(shirt_texture):
             self.selectedToon.shirt_texture = shirt_texture
             self.selectedToon.setShirtTexture(shirt_texture)
-            print(f"Shirt Texture has been changed to {shirt_texture}")
+            self.notify.debug(f"Shirt Texture has been changed to {shirt_texture}")
 
         def updateShortTexture(short_texture):
             self.selectedToon.short_texture = short_texture
             self.selectedToon.setShortTexture(short_texture)
-            print(f"Short Texture has been changed to {short_texture}")
+            self.notify.debug(f"Short Texture has been changed to {short_texture}")
 
         def updateSkirtTexture(skirt_texture):
             self.selectedToon.skirt_texture = skirt_texture
             self.selectedToon.setSkirtTexture(skirt_texture)
-            print(f"Skirt Texture has been changed to {skirt_texture}")
+            self.notify.debug(f"Skirt Texture has been changed to {skirt_texture}")
 
         def updateShirtColor(shirt_color):
             self.selectedToon.shirt_color = shirt_color
             self.selectedToon.setShirtColor(shirt_color)
-            print(f"Shirt color has been changed to {shirt_color}")
+            self.notify.debug(f"Shirt color has been changed to {shirt_color}")
 
         def updateBottomColor(bottom_color):
             self.selectedToon.bottom_color = bottom_color
             self.selectedToon.setBottomColor(bottom_color)
-            print(f"Bottom color has been changed to {bottom_color}")
+            self.notify.debug(f"Bottom color has been changed to {bottom_color}")
 
         def updateShoeTexture(shoe_texture):
             try:
                 self.selectedToon.shoe_texture = shoe_texture
                 self.selectedToon.applyShoeTexture(shoe_texture)
-                print(f"Shoe has been changed to {shoe_texture}")
+                self.notify.debug(f"Shoe has been changed to {shoe_texture}")
             except:
                 pass
 
@@ -363,7 +409,7 @@ class OptionsMenu(DirectObject):
             try:
                 self.selectedToon.short_boot_texture = shoe_texture
                 self.selectedToon.applyShortBootTexture(shoe_texture)
-                print(f"Short Boots has been changed to {shoe_texture}")
+                self.notify.debug(f"Short Boots has been changed to {shoe_texture}")
             except:
                 pass
 
@@ -371,7 +417,7 @@ class OptionsMenu(DirectObject):
             try:
                 self.selectedToon.long_boot_texture = shoe_texture
                 self.selectedToon.applyLongBootTexture(shoe_texture)
-                print(f"Long Boots has been changed to {shoe_texture}")
+                self.notify.debug(f"Long Boots has been changed to {shoe_texture}")
             except:
                 pass
 
@@ -395,7 +441,7 @@ class OptionsMenu(DirectObject):
 
         def generateToon():
             '''Just prints out the Toon's toString'''
-            print(self.selectedToon)
+            self.notify.info(self.selectedToon)
 
         self.rotation_slider = OptionsSlider(
             aspect2d, '', -0.80, rotateToon, (0, 360))
@@ -477,6 +523,329 @@ class OptionsMenu(DirectObject):
 
         )
 
+
+        hatPositioningLabel = OptionsLabel(self.optionsScroll.getCanvas(), "Hat Placement", -4.50)
+        backpackPositioningLabel = OptionsLabel(self.optionsScroll.getCanvas(), "Backpack Placement", -4.95)
+        glassesPositioningLabel = OptionsLabel(self.optionsScroll.getCanvas(), "Glasses Placement", -5.40)
+
+        textEntryGui = loader.loadModel(options_geom).find('**/*ttr_t_gui_gen_buttons_box')
+
+# Hat Frames
+
+        self.hatXFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='x position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.775, 0, -4.70)
+        )
+
+        self.hatXEntry = DirectEntry(
+            parent=self.hatXFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.5),
+            relief=None,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.hatYFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='y position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.45, 0, -4.70)
+        )
+
+        self.hatYEntry = DirectEntry(
+            parent=self.hatYFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.5),
+            relief=None,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.hatZFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='z position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.125, 0, -4.70)
+        )
+
+        self.hatZEntry = DirectEntry(
+            parent=self.hatZFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.5),
+            relief=None,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.hatScaleFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='scale',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (0.150, 0, -4.70)
+        )
+
+        self.hatScaleEntry = DirectEntry(
+            parent=self.hatScaleFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.5),
+            relief=None,
+            pos=(-0.5,0,-0.08)
+        )
+
+
+# Backpack frames
+
+        self.backpackXFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='x position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.775, 0, -5.15)
+        )
+
+        self.backpackXEntry = DirectEntry(
+            parent=self.backpackXFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateBackpackXPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.backpackYFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='y position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.45, 0, -5.15)
+        )
+
+        self.backpackYEntry = DirectEntry(
+            parent=self.backpackYFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateBackpackYPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.backpackZFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='z position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.125, 0, -5.15)
+        )
+
+        self.backpackZEntry = DirectEntry(
+            parent=self.backpackZFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateBackpackZPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.backpackScaleFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='scale',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (0.150, 0, -5.15)
+        )
+
+        self.backpackScaleEntry = DirectEntry(
+            parent=self.backpackScaleFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateBackpackScale,
+            pos=(-0.5,0,-0.08)
+        )
+
+# Glasses frames
+
+        self.glassesXFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='x position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.775, 0, -5.60)
+        )
+
+        self.glassesXEntry = DirectEntry(
+            parent=self.glassesXFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateGlassesXPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.glassesYFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='y position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.45, 0, -5.60)
+        )
+
+        self.glassesYEntry = DirectEntry(
+            parent=self.glassesYFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateGlassesYPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.glassesZFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='z position',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (-0.125, 0, -5.60)
+        )
+
+        self.glassesZEntry = DirectEntry(
+            parent=self.glassesZFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateGlassesZPos,
+            pos=(-0.5,0,-0.08)
+        )
+
+        self.glassesScaleFrame = DirectFrame(
+            parent = self.optionsScroll.getCanvas(),
+            geom = textEntryGui,
+            relief=None,
+            scale=(0.15,0.15,0.15),
+            text='scale',
+            text_font = loader.loadFont(toon_font),
+            text_scale=0.5,
+            text_pos=(0,0.5,0),
+            pos = (0.150, 0, -5.60)
+        )
+
+        self.glassesScaleEntry = DirectEntry(
+            parent=self.glassesScaleFrame,
+            text_scale=0.35,
+            text_font = loader.loadFont(toon_font),
+            frameSize=(-0.2,1.25,-0.55,0.2),
+            relief=None,
+            command=updateGlassesScale,
+            pos=(-0.5,0,-0.08)
+        )
+
+    def hideSelectables(self):
+        self.shoes_texture_menu.selectablesFrame.hide()
+        self.shoes_texture_menu.clickable.show()
+
+        self.boot_short_texture_menu.selectablesFrame.hide()
+        self.boot_short_texture_menu.clickable.show()
+
+        self.boot_long_texture_menu.selectablesFrame.hide()
+        self.boot_long_texture_menu.clickable.show()
+
+        self.glasses_menu.selectablesFrame.hide()
+        self.glasses_menu.clickable.show()
+
+        self.backpack_menu.selectablesFrame.hide()
+        self.backpack_menu.clickable.show()
+
+        self.glove_color_menu.selectablesFrame.hide()
+        self.glove_color_menu.clickable.show()
+
+        self.leg_color_menu.selectablesFrame.hide()
+        self.leg_color_menu.clickable.show()
+
+        self.arm_color_menu.selectablesFrame.hide()
+        self.arm_color_menu.clickable.show()
+
+        self.head_color_menu.selectablesFrame.hide()
+        self.head_color_menu.clickable.show()
+
+        self.anim_menu.selectablesFrame.hide()
+        self.anim_menu.clickable.show()
+
+        self.species_menu.selectablesFrame.hide()
+        self.species_menu.clickable.show()
+        
+        self.bottom_coloring_menu.selectablesFrame.hide()
+        self.bottom_coloring_menu.clickable.show()
+
+        self.skirts_menu.selectablesFrame.hide()
+        self.skirts_menu.clickable.show()
+
+        self.shorts_menu.selectablesFrame.hide()
+        self.shorts_menu.clickable.show()
+
+        self.shirt_color_menu.selectablesFrame.hide()
+        self.shirt_color_menu.clickable.show()
+
+        self.shirt_menu.selectablesFrame.hide()
+        self.shirt_menu.clickable.show()
+
     def hideOrShowOptions(self):
         if self.showOptions:
             self.showOptions = False
@@ -487,11 +856,11 @@ class OptionsMenu(DirectObject):
             self.outer_page.show()
             self.rotation_slider.slider.show()
 
-
 class OptionsLabel:
     '''Used as labels for the bigger letters
     Lower Z means lower on the DirectScrolledFrame'''
-
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsLabel')
+    notify.setDebug(1)
     def __init__(self, labelParent, labelText, z):
         label_outer_font = loader.loadFont('phase_3/fonts/MinnieFont.ttf')
 
@@ -514,6 +883,8 @@ class OptionsLabel:
 
 class OptionsModal(DirectGui.DirectFrame):
     '''This is the left part of any Options Modal, everything else past this class inherits from this and adds to it'''
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsModal')
+    notify.setDebug(1)
 
     def __init__(self, modalParent, modalText, z):
         modal_font = loader.loadFont('phase_3/fonts/ImpressBT.ttf')
@@ -536,6 +907,8 @@ class OptionsModal(DirectGui.DirectFrame):
 
 class OptionsSlider(OptionsModal):
     '''Creates a Slider which is useful for functions with arguments that include a range'''
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsSlider')
+    notify.setDebug(1)
 
     def __init__(self, modalParent, modalText, z, slider_command=None, given_range=(0, 100)):
         super().__init__(modalParent, modalText, z)  # Creates the text on the left
@@ -548,6 +921,7 @@ class OptionsSlider(OptionsModal):
             thumb_geom=self.slider_thumb_geom,
             thumb_geom_scale=(0.4, 0.1, 0.25),
             thumb_relief=None,
+            thumb_frameSize=(-0.25,0.25,-0.25,0.25),
             thumb_clickSound=loader.loadSfx(gui_click_sound),
             thumb_rolloverSound=loader.loadSfx(gui_rollover_sound),
             geom=self.slider_scroll_geom,
@@ -563,6 +937,8 @@ class OptionsSlider(OptionsModal):
 
 class OptionsToggle(OptionsModal):
     '''Creates a toggle that creates an off/on switch'''
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsToggle')
+    notify.setDebug(1)
 
     def __init__(self, modalParent, modalText, z, toggle_command=None):
         super().__init__(modalParent, modalText, z)  # Creates the text on the left
@@ -623,6 +999,8 @@ class OptionsChoosingMenu(OptionsModal):
        keyOrValue - 0 returns the key, 1 returns the value in the used_dictionary 
     '''
 
+    notify = DirectNotifyGlobal.directNotify.newCategory('OptionsChoosingMenu')
+    notify.setDebug(1)
     def __init__(self, modalParent, modalText, x, z, width_of_clickable, used_dictionary=None, chosen_command=None, keyOrValue=1):
         super().__init__(modalParent, modalText, z)
         self.options_geom = loader.loadModel(
@@ -921,7 +1299,7 @@ class OptionsChoosingMenu(OptionsModal):
         if self.populateBoolean:
             pass  # We've already populated it.
         else:
-            print('Generating Selectable Frame for the first time')
+            self.notify.info('Generating Selectable Frame for the first time')
             if keyOrValue == 1:  # If we want to return the values
                 i = 0
                 for item in selectables_dictionary.keys():

@@ -5,7 +5,7 @@ loadPrcFileData('', 'window-title Test File')
 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import WindowProperties
-from Toon import Toon
+from src.toon.Toon import Toon
 
 class MyApp(ShowBase):
     def __init__(self):
@@ -31,7 +31,6 @@ class MyApp(ShowBase):
         self.toon = Toon('du', 'ss', False, 'ls', 's', 'f', 'Yellow', 'Yellow', 'White', 'Yellow', 'Oiled Sellbot Cog-Crusher Shirt', 'Oiled Sellbot Cog-Crusher Shorts', 'Oiled Sellbot Cog-Crusher Skirt', 'White', 'White', None, 'Four Eyes', 1, None, None, 'Sleuthing Sneakers', 'fewaf', True, True)
         self.toon.toonActor.setPos(10,0,0)
         self.toon.toonActor.pose('Call Pet', 50)
-        base.setBackgroundColor(1,1,1)
 
         # Use the print-screen function on your keyboard to take a screenshot, and then post it in 
         # https://www.aatbio.com/tools/online-automatic-green-screen-remover, a tool you can use to get rid of green screen!
