@@ -1,7 +1,7 @@
 from direct.actor.Actor import Actor
 from panda3d.core import *
-from ToonHead import *
-from ToonDNA import *
+from .ToonHead import *
+from .ToonDNA import *
 
 
 toonTorsoTypes = {"ss": 'phase_3/models/char/tt_a_chr_dgs_shorts_torso_1000.bam',  # short shorts
@@ -45,7 +45,8 @@ class Toon:
         # Accessory based stuff
         self.backpack_type = backpack
         self.backpack_model = None
-        self.hat = None
+        self.hat_type = None
+        self.hat_model = None
         # Also counts for mask since they're both the same.
         self.glasses_type = glasses
         self.glasses_model = None
@@ -164,11 +165,11 @@ class Toon:
             pass
 
         # Add shadow
-        shadow = loader.loadModel("phase_3/models/props/drop_shadow.bam")
-        shadow.reparentTo(self.toonActor.find('**/joint_shadow'))
+        self.shadow = loader.loadModel("phase_3/models/props/drop_shadow.bam")
+        self.shadow.reparentTo(self.toonActor.find('**/joint_shadow'))
 
-        shadow.setSx(0.5)
-        shadow.setSy(0.5)
+        self.shadow.setSx(0.5)
+        self.shadow.setSy(0.5)
 
 # DNA Related functions
 
@@ -330,7 +331,11 @@ class Toon:
                 sleeveTexturePath = shirt_dict[shirt][1]
                 sleeveTexture = loader.loadTexture(sleeveTexturePath)
                 self.toonActor.find('**/sleeves').setTexture(sleeveTexture, 1)
-            else:
+            elif len(shirt_dict[shirt]) == 3:
+                sleeveTexturePath = shirt_dict[shirt][1]
+                sleeveRGBTexturePath = shirt_dict[shirt][2]
+                sleeveTexture = loader.loadTexture(sleeveTexturePath, sleeveRGBTexturePath)
+                self.toonActor.find('**/sleeves').setTexture(sleeveTexture, 1)
                 pass
         except:
             pass
@@ -353,9 +358,15 @@ class Toon:
         '''Sets the Toon's short texture. Used when generating the Toon and through Options Menu'''
         if self.torso_type[-1] == 'd':
             try:
-                skirtTexturePath = skirt_dict[skirt]
-                skirtTexture = loader.loadTexture(skirtTexturePath)
-                self.toonActor.find('**/torso-bot').setTexture(skirtTexture, 1)
+                if len( skirt_dict[skirt] ) == 1:
+                    skirtTexturePath = skirt_dict[skirt][0]
+                    skirtTexture = loader.loadTexture(skirtTexturePath)
+                    self.toonActor.find('**/torso-bot').setTexture(skirtTexture, 1)
+                elif len( skirt_dict[skirt] ) == 2:
+                    skirtTexturePath = skirt_dict[skirt][0]
+                    rgbTexturePath = skirt_dict[skirt][1]
+                    skirtTexture = loader.loadTexture(skirtTexturePath, rgbTexturePath)
+                    self.toonActor.find('**/torso-bot').setTexture(skirtTexture, 1)
             except:
                 pass
                 # If nothing happens when changing skirts, it's potentially misspelled, not in ToonDNA, or the correct dictionary.
@@ -381,7 +392,6 @@ class Toon:
  # Accessory related functions
     def attachBackpack(self, backpack_to_attach):
         '''Attaches a backpack based on the type of backpack.'''
-        print('Backpack has been changed to ' + backpack_to_attach)
 
         # So if we already had a model before changing it, remove its node.
         if self.backpack_model:
@@ -468,6 +478,12 @@ class Toon:
                     backpack_dict[backpack_to_attach][5])
             else:
                 print("What kind of torso are you rockin?")
+
+    def returnBackpackPosition(self):
+        return self.backpack_model.getPos()
+
+    def returnGlassesPosition(self):
+        return self.glasses_model.getPos()
 
     def attachGlasses(self, glasses_to_attach):
         '''Attaches glasses to the Toon.'''
@@ -790,7 +806,13 @@ class Toon:
             self.toonActor.find('**/*shoes').setTexture(texture, 1)
         except:
             pass
-    
+
+# Toon Functions
+
+    def setPosition(self, x, y, z):
+        '''Sets the position of the Toon's actor'''
+        self.toonActor.setPos(x,y,z)
+
     def __str__(self) -> str:
         '''String representation of a Toon object'''
         #toonString = ', {self.shirt_texture}, {self.short_texture}, {self.skirt_texture}, '{self.bottom_color}', {self.shoe_type}, {self.shoe_texture}, {self.long_boot_texture}, {self.short_boot_texture}, {self.backpack_type}, {self.glasses_type}, {self.smooth_enabled}, {self.wearsShoes})"
