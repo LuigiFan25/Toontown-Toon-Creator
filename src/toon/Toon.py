@@ -822,7 +822,6 @@ class Toon:
         toonString += f"{str(self.eyelashes)}, "
         toonString += f"'{self.torso_type}', "
         toonString += f"'{self.leg_size}', "
-       # toonString += f"'{self.gender}', "
         toonString += f"'{self.head_color}', "
         toonString += f"'{self.arm_color}', "
         toonString += f"'{self.glove_color}', "
